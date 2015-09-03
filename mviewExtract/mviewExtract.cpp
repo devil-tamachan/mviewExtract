@@ -113,10 +113,12 @@ int _tmain(int argc, _TCHAR* argv[])
     if(flag & 0x1)printf("\"%s\"  flag=%u (compressed!), size=%u, decompressedSize=%u\n", path, flag, sizeData, sizeDataDecompressed);
     else          printf("\"%s\"  flag=%u, size=%u\n", path, flag, sizeData);
 
+    if(PathCombineA(path, "out\\", path)==NULL)goto err;
     strcpy_s(pathDir, 4096, path);
 
     PathRemoveFileSpecA(pathDir);
-    MakeSureDirectoryPathExists(pathDir);
+    PathAddBackslashA(pathDir);
+    BOOL bRet = MakeSureDirectoryPathExists(pathDir);
 
     fpDst = fopen(path, "wb");
     if(fpDst==NULL)goto err;
