@@ -54,6 +54,26 @@ bool FILEtoFILE(FILE *dst, FILE *src, unsigned int size)
   return false;
 }
 
+void SanitizePath(char *path)
+{
+  if(path[0]=='\\'||path[0]=='/')path[0]='_';
+  char *found = NULL;
+  while(1)
+  {
+    found = strstr(path, "..");
+    if(found==NULL)break;
+    found[0] = '_';
+    found[1] = '_';
+  }
+  found = NULL;
+  while(1)
+  {
+    found = strstr(path, ":");
+    if(found==NULL)break;
+    found[0] = '_';
+  }
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
   char *path = NULL, *pathDir = NULL;
@@ -82,6 +102,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
     int numPath = freadNullStr(fpMview, path, 4096);
     if(numPath==0)goto err;
+
+    SanitizePath(path);
 
     freadNullStr(fpMview, NULL, 0);
     if(fread(&flag, 1, 4, fpMview)!=4)goto err;
